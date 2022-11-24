@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/whilew/cream_conf/common/xcodec"
-	"io/ioutil"
+	"os"
 	"path"
 	"path/filepath"
 )
+
+// todo 监听文件变化
 
 type ConfLoaderFile struct {
 	filePath   string
@@ -37,7 +39,7 @@ func tryFindConfigFilePath(c *Configuration) string {
 	filePath := c.GetStringd("config.file.name", "config.yaml")
 	for i := 0; i < 10; i++ {
 		// 检查配置文件是否存在
-		if _, err := ioutil.ReadFile(filePath); err == nil {
+		if _, err := os.ReadFile(filePath); err == nil {
 			return filePath
 		}
 		filePath = "../" + filePath
@@ -51,7 +53,7 @@ func (f *ConfLoaderFile) loadConfigFile() error {
 		return errors.New(fmt.Sprintf("get file config absolute path error. path:%s, err: %v", f.filePath, err))
 	}
 	fmt.Println(fmt.Sprintf("开始加载配置文件[%s]", absolutePath))
-	contentData, err := ioutil.ReadFile(absolutePath)
+	contentData, err := os.ReadFile(absolutePath)
 	if err != nil {
 		return errors.New(fmt.Sprintf("read file by absolute path error. absolute_path:%s, err: %v", absolutePath, err))
 	}
